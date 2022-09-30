@@ -4,36 +4,21 @@ metadata:
   name: kubecon-demo
 spec:
   components:
-    - name: catalog
+    - name: hello-world
       properties:
         envVersion: 8-jdk8
-        serviceType: NodePort
+        serviceType: LoadBalancer
         replicas: 1
-        warURL: https://static.kubevela.net/example/java-example/nanoservice/catalog.war
+        warURL: https://github.com/wonderflow/kubecon-na-2022-demo/raw/main/war-definition/sample.war
       type: java-war
-    - name: customer
-      properties:
-        envVersion: 8-jdk8
-        serviceType: NodePort
-        replicas: 1
-        warURL: https://static.kubevela.net/example/java-example/nanoservice/customer.war
-      type: java-war
-    - dependsOn:
-        - catalog
-        - customer
-      name: order-web
-      properties:
-        env:
-          - name: CATALOG_HOST
-            value: catalog
-          - name: CUSTOMER_HOST
-            value: customer
-        envVersion: 8-jdk8
-        javaOpts: -Xms512m -Xmx512m -Xss256K
-        replicas: 1
-        serviceType: NodePort
-        warURL: https://static.kubevela.net/example/java-example/nanoservice/order.war
-      type: java-war
+      traits:
+        - type: gateway
+          properties:
+            classInSpec: true
+            class: traefik
+            domain: 47.251.8.82.nip.io
+            http:
+              "/sample": 8080
   policies:
     - name: target-default
       type: topology
