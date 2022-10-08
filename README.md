@@ -1,5 +1,7 @@
 # KubeVela Demo for KubeCon NA 2022
 
+---
+
 ## Installation of KubeVela with VelaD
 
 1. Create a virtual machine with public IP.
@@ -55,7 +57,7 @@ vela addon enable prometheus-server
 
 Grafana Default password: `admin` / `kubevela`
 
-## Extend KubeVela Component Type
+## Extend KubeVela: create custom component type
 
 1. Extend a component type by writing CUE definitions
 
@@ -146,3 +148,51 @@ vela status demo2 --endpoint
 ```
 
 It should be like : http://116.62.199.204.nip.io/order .
+
+## Extend KubeVela: create clickhouse addon
+
+In this demo, we'll build a clickhouse addon from [clickhouse operator](https://github.com/Altinity/clickhouse-operator).
+
+1. Enable local addon:
+
+```
+vela addon enable addons/clickhouse serviceType=NodePort
+```
+
+2. You can check addon as a normal vela application with prefix `addon-` in `vela-system` namespace.
+
+```
+vela status addon-clickhouse -n vela-system
+```
+
+Get the endpoint by:
+
+```
+vela status addon-clickhouse -n vela-system --endpoint
+```
+
+The clickhouse operator dashboad can be visited at http://47.251.8.82:31929 . It was provided by clickhouse operator.
+
+3. Show clickhouse component definition created along with clickhouse addon.
+
+```
+vela show clickhouse --format markdown
+```
+
+4. Deploy the application with clickhouse component
+
+```
+vela up -f ckapp.yaml
+```
+
+5. You can check the resource topology in velaux.
+
+Visit URL(change to your IP): http://47.251.8.82:32016/applications/addon-node-exporter/envbinding/syc-vela-system/status
+
+6. Get the app for clickhouse playground.
+
+```
+vela status ck-app --endpoint
+```
+
+Visit it at: http://47.251.8.82.nip.io/play .
