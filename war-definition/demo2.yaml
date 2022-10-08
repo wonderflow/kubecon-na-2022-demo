@@ -1,21 +1,17 @@
 apiVersion: core.oam.dev/v1beta1
 kind: Application
 metadata:
-  name: kubecon-demo2
+  name: demo2
 spec:
   components:
     - name: catalog
       properties:
         envVersion: 8-jdk8
-        serviceType: NodePort
-        replicas: 1
         warURL: https://static.kubevela.net/example/java-example/nanoservice/catalog.war
       type: java-war
     - name: customer
       properties:
         envVersion: 8-jdk8
-        serviceType: NodePort
-        replicas: 1
         warURL: https://static.kubevela.net/example/java-example/nanoservice/customer.war
       type: java-war
     - dependsOn:
@@ -30,10 +26,15 @@ spec:
             value: customer
         envVersion: 8-jdk8
         javaOpts: -Xms512m -Xmx512m -Xss256K
-        replicas: 1
-        serviceType: NodePort
         warURL: https://static.kubevela.net/example/java-example/nanoservice/order.war
       type: java-war
+      traits:
+        - type: gateway
+          properties:
+            class: traefik
+            domain: 47.251.8.82.nip.io
+            http:
+              "/order": 8080
   policies:
     - name: target-default
       type: topology
@@ -49,6 +50,16 @@ spec:
         clusters: ["remote"]
         # This namespace must be created before deploying.
         namespace: "default"
+    - name: override-prod-gateway
+      type: override
+      properties:
+        components:
+          - name: order-web
+            traits:
+              - type: gateway
+                properties:
+                  # override the domain with the managed cluster IP
+                  domain: 116.62.199.204.nip.io
   workflow:
     steps:
       - name: deploy2default
@@ -60,4 +71,4 @@ spec:
       - name: deploy2prod
         type: deploy
         properties:
-          policies: ["target-prod"]
+          policies: ["target-prod", "override-prod-gateway"]

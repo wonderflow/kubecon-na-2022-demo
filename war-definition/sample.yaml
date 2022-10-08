@@ -7,42 +7,13 @@ spec:
     - name: hello-world
       properties:
         envVersion: 8-jdk8
-        serviceType: LoadBalancer
         replicas: 1
         warURL: https://github.com/wonderflow/kubecon-na-2022-demo/raw/main/war-definition/sample.war
       type: java-war
       traits:
         - type: gateway
           properties:
-            classInSpec: true
             class: traefik
             domain: 47.251.8.82.nip.io
             http:
               "/sample": 8080
-  policies:
-    - name: target-default
-      type: topology
-      properties:
-        # The cluster with name local is installed the KubeVela.
-        clusters: ["local"]
-        namespace: "default"
-    - name: target-prod
-      type: topology
-      properties:
-        # If you don't have a remote cluster, just use local and change the namespace to a different one
-        #clusters: ["local"]
-        clusters: ["remote"]
-        # This namespace must be created before deploying.
-        namespace: "default"
-  workflow:
-    steps:
-      - name: deploy2default
-        type: deploy
-        properties:
-          policies: ["target-default"]
-      - name: manual-approval
-        type: suspend
-      - name: deploy2prod
-        type: deploy
-        properties:
-          policies: ["target-prod"]

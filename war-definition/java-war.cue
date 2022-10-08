@@ -145,8 +145,9 @@ template: {
 			spec: {
 				selector: "app.oam.dev/component": context.name
 				ports: [{
-					name: context.name
-					port: 8080
+					name:       context.name
+					port:       8080
+					targetPort: 8080
 				}]
 				type: parameter.serviceType
 			}
