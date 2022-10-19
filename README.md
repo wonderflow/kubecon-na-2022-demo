@@ -196,3 +196,6 @@ vela status ck-app --endpoint
 ```
 
 Visit it at: http://47.251.8.82.nip.io/play .
+
+
+> Here's a blog to introduce the end to end guide for buiding an extended addon: https://kubevela.io/blog/2022/10/18/building-addon-introduction .
